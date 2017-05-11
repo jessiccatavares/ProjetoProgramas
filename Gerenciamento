@@ -1,0 +1,122 @@
+package principal;
+import javax.swing.JOptionPane;
+import financeiro.Conta;
+import financeiro.Divida;
+import java.util.ArrayList;
+import pessoal.Usuario;
+
+public class Gerenciamento {
+	public static void main(String[] args) {
+		ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
+		String opcao;
+		do{
+			opcao = JOptionPane.showInputDialog(null,"Gerenciamento de finanças\n"
+					+ "1 - Cadastrar usuário\n"
+					+ "2 - Cadastrar dívida\n"
+					+ "3 - Adicionar conta a uma dívida\n"
+					+ "4 - Listar dívida\n"
+					+ "5 - Valor de dívida mensal\n"
+					+ "6 - Pagar conta\n"
+					+ "7 - Listar usuário\n"
+					+ "0 - Sair\n");
+			
+			if(opcao.charAt(0)=='1'){
+				Usuario usuario = new Usuario();
+				usuario.setCpf(Integer.parseInt(JOptionPane.showInputDialog(null, "Informe o cpf do usuário: ")));
+				usuario.setNome(JOptionPane.showInputDialog(null, "Informe o nome do usuário: "));
+				usuarios.add(usuario);
+				JOptionPane.showMessageDialog(null, "Cadastrado realizado com sucesso.\n");
+				
+			}
+			
+			else if(opcao.charAt(0)=='2'){
+				String nome = JOptionPane.showInputDialog(null, "Informe o usuario para cadastrar dívida: ");
+				for (int i = 0; i < usuarios.size(); i++) {
+					if(nome.equals(usuarios.get(i).getNome())){
+						Divida divida = new Divida();
+						Conta conta = new Conta();
+						divida.setMes(JOptionPane.showInputDialog(null, "Informe o mês da dívida: "));
+						conta.setCodigo(Integer.parseInt(JOptionPane.showInputDialog(null, "Informe o código da conta: ")));
+						conta.setTipo(JOptionPane.showInputDialog(null, "Informe o tipo da conta: "));
+						conta.setValor(Float.parseFloat(JOptionPane.showInputDialog(null, "Informe o valor da conta: ")));
+						divida.addConta(conta);
+						usuarios.get(i).addDivida(divida);
+					}
+				}
+				
+			}else if(opcao.charAt(0)=='3'){
+				String nome = JOptionPane.showInputDialog(null, "Informe o usuario para adicionar conta: ");
+				for (int i = 0; i < usuarios.size(); i++) {
+					if (nome.equals(usuarios.get(i).getNome())){
+						String mes = JOptionPane.showInputDialog(null, "Informe o mês da dívida: ");
+						if(mes.equals(usuarios.get(i).getDividas().get(i).getMes())){
+							Conta conta = new Conta();
+							conta.setCodigo(Integer.parseInt(JOptionPane.showInputDialog(null, "Informe o código da conta: ")));
+							conta.setTipo(JOptionPane.showInputDialog(null, "Informe o tipo da conta: "));
+							conta.setValor(Float.parseFloat(JOptionPane.showInputDialog(null, "Informe o valor da conta: ")));
+							usuarios.get(i).getDividas().get(i).addConta(conta);
+							JOptionPane.showMessageDialog(null, "Conta adicionada.\n");
+							
+						}
+						
+					}
+					
+				}
+			}
+			
+			else if(opcao.charAt(0)=='4'){
+				String lista_divida = "Lista de dívidas de ";
+				String nome = JOptionPane.showInputDialog(null, "Informe o usuário para listar dívida: ");
+				for (int i = 0; i < usuarios.size(); i++){
+					if(nome.equals(usuarios.get(i).getNome())){
+						lista_divida+= nome+"\n"+"Conta do mês de "+usuarios.get(i).getDividas().get(i).getMes()+"\n"
+					+usuarios.get(i).getDividas().get(i).getConta();
+					}
+				}JOptionPane.showMessageDialog(null, lista_divida);
+				
+			}else if(opcao.charAt(0)=='5'){
+				float valor=0;
+				String retorno="";
+				String contas="";
+				String nome = JOptionPane.showInputDialog(null, "Informe o usuario para verificar valor de divida mensal: ");
+				for (int i = 0; i < usuarios.size(); i++) {
+					if (nome.equals(usuarios.get(i).getNome())){
+						String mes = JOptionPane.showInputDialog(null, "Informe o mês da dívida: ");
+						if(mes.equals(usuarios.get(i).getDividas().get(i).getMes())){
+							retorno = "Mês de "+usuarios.get(i).getDividas().get(i).getMes()+"\n";
+							valor = usuarios.get(i).getDividas().get(i).getValorTotal();
+							contas = usuarios.get(i).getDividas().get(i).getConta();
+							
+							
+						}
+						}
+						
+				}JOptionPane.showMessageDialog(null, retorno + "Valor total: " + valor +"\n"+contas);
+					
+			}else if(opcao.charAt(0)=='6'){
+				String nome = JOptionPane.showInputDialog(null,"Informe o usuário da conta a pagar: ");
+				for (int i = 0; i < usuarios.size(); i++) {
+					if(nome.equals(usuarios.get(i).getNome())){
+						String mes = JOptionPane.showInputDialog(null,"Informe o mês da divida para pagar conta: ");
+							if(mes.equals(usuarios.get(i).getDividas().get(i).getMes())){
+								int codigo = Integer.parseInt(JOptionPane.showInputDialog(null,"Informe o código da conta a pagar: "));
+									if(codigo == usuarios.get(i).getDividas().get(i).getContas().get(i).getCodigo()){
+										usuarios.get(i).getDividas().get(i).getContas().remove(i);
+										JOptionPane.showMessageDialog(null, "Pagamento efetuado com sucesso\n");
+									}
+							}
+					}
+				}
+			}else if(opcao.charAt(0)=='7'){
+				String lista_usuario = "Lista de usuários\n";
+				for (int i = 0; i < usuarios.size(); i++) {
+					lista_usuario += "CPF: "+usuarios.get(i).getCpf()+" - "+usuarios.get(i).getNome()+"\n";
+				}JOptionPane.showMessageDialog(null, lista_usuario);
+				
+			}
+			
+		}while(opcao.charAt(0)!='0');
+		System.exit(0);
+
+}
+}
